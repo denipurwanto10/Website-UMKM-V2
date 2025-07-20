@@ -48,7 +48,6 @@ Semua operasi database menggunakan **parameterized queries** untuk mencegah **SQ
 ## 📥 Download Source Code
 
 🔗 **[Unduh Source Code Website UMKM V2 (Google Drive)](https://drive.google.com/drive/folders/1_N-wJFxykzO_3pF_PcC8zImsKEWU0__w?usp=sharing)**  
-> *Ganti dengan link Google Drive asli kamu.*
 
 ---
 
