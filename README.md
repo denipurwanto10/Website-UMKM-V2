@@ -1,32 +1,35 @@
-# Skripsi — Migrasi CI3 → React + Node.js + MySQL
+# Sistem Informasi UMKM Kabupaten Bandung
 
-Aplikasi Sistem Informasi UMKM. Arsitektur baru (React + TypeScript + Node.js + MySQL existing),
-migrasi bertahap dari CodeIgniter 3. **CI3 tetap jalan** selama masa transisi, database `skripsi`
-tidak diubah strukturnya.
+Aplikasi pendataan dan direktori UMKM: portal publik (peta sebaran Leaflet + direktori usaha),
+dashboard admin (verifikasi, statistik, grafik), dan portal pemilik usaha (CRUD data UMKM &
+promosi). Tema hitam-putih, responsif mobile, dark/light mode.
+
+## Tech Stack
+
+| Lapisan | Teknologi |
+|---|---|
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS v4, shadcn/ui, React Router, TanStack Query, React Hook Form + Zod, Recharts, Leaflet, lucide-react, sonner |
+| Backend | Node.js, Express, TypeScript (tsx saat dev), JWT Bearer, multer, mysql2 |
+| Database | MySQL 8 (schema `skripsi`) |
 
 ## Struktur
 
 ```text
-application/   Legacy CodeIgniter 3 (tetap dipakai selama migrasi)
-server/api/    Legacy Node.js API — port 3000 (dipakai CI3 via cURL)
-backend/       Backend BARU (Node.js + TypeScript) — port 3001
-frontend/      Frontend BARU (React + TS + Vite + Tailwind v4 + shadcn pola) — port 5173
-database/      Dump + backup MySQL
-scripts/       Util sekali pakai (extract-polygons)
+backend/     REST API (Express + TS) — port 3001
+frontend/    Aplikasi web (React + Vite) — port 5173 (dev)
+scripts/     Util sekali pakai (extract-polygons)
+uploads/     Foto runtime (users/, umkm/)
+database/    Dump MySQL lokal — TIDAK di-commit (berisi data asli)
 ```
 
-## Prasyarat
-
-- Node.js 20+, MySQL 8 (database `skripsi` existing), Laragon/XAMPP untuk CI3 bila perlu.
-
-## Menjalankan (stack baru)
+## Menjalankan
 
 ```bash
 # 1. Backend (port 3001)
 cd backend
 cp .env.example .env   # isi AUTH_SECRET + kredensial DB
 npm install
-npx tsx src/server.ts  # dev — atau: npm run build && npm start
+npm run dev            # dev — atau: npm run build && npm start
 
 # 2. Frontend (port 5173)
 cd frontend
@@ -35,10 +38,11 @@ npm install
 npm run dev
 ```
 
-Buka http://localhost:5173 — direktori UMKM publik langsung tampil dari MySQL live.
-Login memakai akun existing di tabel `users`.
+Buka http://localhost:5173 — direktori UMKM tampil dari MySQL live.
+Production: `npm run build` di `frontend/` lalu sajikan `dist/`;
+set `VITE_API_URL` ke URL API bila beda origin.
 
-## API baru (port 3001)
+## API (port 3001)
 
 Kontrak konsisten: `{ success, message, data }`. Auth: JWT Bearer (`POST /api/auth/login`).
 
@@ -54,27 +58,19 @@ Kontrak konsisten: `{ success, message, data }`. Auth: JWT Bearer (`POST /api/au
 | GET/POST | `/api/promosi`, `/api/promosi/user/:username`, `/api/promosi/:id` | baca publik, tulis login |
 | PUT/DELETE | `/api/promosi/:id` | login |
 | GET | `/api/stats` | login |
-| GET | `/uploads/users|umkm/:file` | publik (foto existing) |
+| GET | `/uploads/users|umkm/:file` | publik (foto) |
 
-## Halaman React
+## Halaman
 
-Publik: `/` (direktori + cari), `/umkm/:id` (detail), `/peta` (Leaflet + poligon + data live),
-`/login`, `/register`. Admin/Owner (login): `/dashboard`, `/umkm`, `/usaha/:id`, `/promosi`,
-`/peta`, `/profil`. Khusus Admin: `/users`.
+Publik: `/` (beranda + direktori), `/usaha/:id` (detail), `/peta` (Leaflet + poligon kecamatan + data live),
+`/login`, `/register`. Admin/Owner (login): `/dashboard`, `/umkm`, `/promosi`, `/peta`, `/profil`.
+Khusus Admin: `/users`. Route tidak dikenal: halaman 404.
 
-Halaman Peta memakai `frontend/public/data/kecamatan-polygons.json` — hasil ekstrak
-`scripts/extract-polygons.mjs` dari `application/views/peta.php`, jadi geometri poligon
-100% identik dengan CI3.
+Data poligon peta: `frontend/public/data/kecamatan-polygons.json` (di-generate `scripts/extract-polygons.mjs`).
 
 ## Keamanan
 
-- Parameterized queries di semua repository (allowlist kolom untuk SET dinamis).
+- Semua query parameterized (mysql2), allowlist kolom untuk SET dinamis.
 - Respons auth tidak pernah memuat hash password.
-- Upload: 2MB, jpg/png/gif, nama acak — parity config CI3.
-- `.env` tidak masuk Git (lihat `.gitignore`).
-
-## Dokumen migrasi
-
-- `MIGRATION_MAP.md` — peta fitur CI3 → API baru → halaman React + status.
-- `ARCHITECTURE.md` — topologi target.
-- `database/backup-skripsi-2026-10-01.sql` — backup fresh sebelum migrasi tulis.
+- Upload dibatasi 2MB, jpg/png/gif, nama file acak.
+- `.env` dan dump database tidak masuk Git (lihat `.gitignore`).
