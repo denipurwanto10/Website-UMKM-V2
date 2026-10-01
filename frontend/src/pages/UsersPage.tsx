@@ -103,23 +103,23 @@ export function UsersPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-end justify-between gap-2">
+      <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-bold">Users</h1>
+          <h1 className="text-xl font-bold sm:text-2xl">Pengguna</h1>
           <p className="text-sm text-muted-foreground">Kelola akun Admin & Owner</p>
         </div>
         <Button size="sm" onClick={openCreate}>
-          <Plus className="h-4 w-4" /> Tambah
+          <Plus className="h-4 w-4" /> Tambah Pengguna
         </Button>
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Daftar Users</CardTitle></CardHeader>
+        <CardHeader><CardTitle className="text-base">Daftar Pengguna</CardTitle></CardHeader>
         <CardContent className="p-0 sm:p-6 sm:pt-0">
           {users.isLoading && <p className="p-4 text-sm text-muted-foreground">Memuat…</p>}
           {users.isError && <p className="p-4 text-sm text-destructive">{apiError(users.error)}</p>}
           {users.data && (
-            <Table>
+            <Table className="min-w-[600px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Foto</TableHead>
@@ -165,11 +165,11 @@ export function UsersPage() {
 
       {/* Dialog tambah/ubah */}
       <Dialog open={dialog !== null} onOpenChange={(o) => !o && setDialog(null)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{dialog?.mode === 'create' ? 'Tambah User' : 'Ubah User'}</DialogTitle>
+        <DialogContent>
+          <DialogHeader className="pb-1">
+            <DialogTitle className="text-lg sm:text-xl">{dialog?.mode === 'create' ? 'Tambah Pengguna' : 'Ubah Pengguna'}</DialogTitle>
             <DialogDescription>
-              {dialog?.mode === 'create' ? 'Password baru minimal 8 karakter.' : 'Kosongkan password bila tidak diubah.'}
+              {dialog?.mode === 'create' ? 'Buat akun baru — password minimal 8 karakter.' : 'Kosongkan password bila tidak diubah.'}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={form.handleSubmit((v) => save.mutate(v))} className="flex flex-col gap-3">

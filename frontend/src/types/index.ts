@@ -66,6 +66,8 @@ export interface Stats {
   perKategori: { kategori_produk: string; jumlah_umkm: number }[];
   perKecamatan: Record<string, unknown>[];
   jenisUsaha: { jenis_usaha: string; jumlah: number }[];
+  desaPerKategori: { kategori_produk: string; jumlah_desa: number }[];
+  desaPerKecamatan: { kecamatan: string; jumlah_desa: number }[];
 }
 
 export interface AuthResponse {

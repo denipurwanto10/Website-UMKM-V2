@@ -1,10 +1,11 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AdminLayout } from './layouts/AdminLayout';
 import { PublicLayout } from './layouts/PublicLayout';
 import { RequireAuth } from './routes/RequireAuth';
 import { DashboardPage } from './pages/DashboardPage';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 import { PetaPage } from './pages/PetaPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { PromosiPage } from './pages/PromosiPage';
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="peta" element={<PetaPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
 
         {/* Area loginwajib */}
@@ -45,7 +47,7 @@ export default function App() {
           </Route>
         </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );

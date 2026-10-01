@@ -29,7 +29,17 @@ export interface Envelope<T> {
 }
 
 export function apiError(err: unknown): string {
-  if (axios.isAxiosError(err)) return err.response?.data?.message ?? 'Terjadi kesalahan server';
+  if (axios.isAxiosError(err)) {
+    // Ada respons dari server (4xx/5xx) — pakai pesan server.
+    if (err.response?.data && typeof err.response.data === 'object' && 'message' in err.response.data) {
+      return String((err.response.data as { message: unknown }).message);
+    }
+    // Tidak ada respons sama sekali — backend mati / URL salah / jaringan putus.
+    if (err.request && !err.response) {
+      return 'Tidak dapat terhubung ke server (http://localhost:3001). Pastikan backend jalan via `npm run dev` di folder backend.';
+    }
+    return 'Terjadi kesalahan server';
+  }
   return err instanceof Error ? err.message : 'Terjadi kesalahan';
 }
 

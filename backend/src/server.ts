@@ -4,7 +4,6 @@ import express from 'express';
 import path from 'node:path';
 import { env } from './config/env';
 import { pool } from './config/db';
-import { requireAuth } from './middleware/auth';
 import { authRoutes } from './routes/auth.routes';
 import { promosiRoutes } from './routes/promosi.routes';
 import { umkmRoutes } from './routes/umkm.routes';
@@ -14,7 +13,23 @@ import { stats } from './controllers/stats.controller';
 dotenv.config();
 
 const app = express();
-app.use(cors({ origin: env.frontendUrl }));
+// CORS dev: izinkan localhost maupun 127.0.0.1 (port berapa pun), plus FRONTEND_URL.
+// Tanpa ini, buka via http://127.0.0.1:5173 diblokir browser padahal backend sehat.
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin) return cb(null, true);
+      try {
+        const host = new URL(origin).hostname;
+        if (host === 'localhost' || host === '127.0.0.1') return cb(null, true);
+      } catch {
+        /* abaikan, cek allowlist di bawah */
+      }
+      if (origin === env.frontendUrl) return cb(null, true);
+      return cb(null, false);
+    },
+  }),
+);
 app.use(express.json({ limit: '2mb' }));
 
 // Layani file upload existing (CI3 base_url('uploads/...')) lewat API baru juga,
@@ -26,7 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/umkm', umkmRoutes);
 app.use('/api/promosi', promosiRoutes);
-app.get('/api/stats', requireAuth, stats);
+app.get('/api/stats', stats);
 
 // 404 JSON konsisten (bukan HTML Express)
 app.use('/api', (_req, res) => res.status(404).json({ success: false, message: 'Endpoint tidak ditemukan', data: null }));

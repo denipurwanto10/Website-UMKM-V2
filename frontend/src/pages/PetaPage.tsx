@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { LayersControl, MapContainer, Polygon, Popup, TileLayer } from 'react-leaflet';
+import { LayersControl, MapContainer, Polygon, Popup, TileLayer, Tooltip } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -121,8 +121,8 @@ export function PetaPage() {
             {counts.isSuccess ? `${counts.data.length} desa/kelurahan dengan UMKM disetujui` : 'Memuat data…'}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-0 sm:p-6 sm:pt-0">
-          <div className="h-[60vh] min-h-[400px] w-full overflow-hidden rounded-md border border-border sm:mx-0">
+        <CardContent className="flex flex-col gap-3 p-0 sm:p-6 sm:pt-0">
+          <div className="relative isolate z-0 h-[60vh] min-h-[400px] w-full overflow-hidden rounded-md border border-border sm:mx-0">
             <MapContainer
               center={CENTER}
               zoom={10}
@@ -143,12 +143,17 @@ export function PetaPage() {
               {entries.map(([key, poly]) => {
                 const name = baseName(key);
                 const rows = rowsByKec.get(name) ?? [];
+                const total = rows.reduce((a, r) => a + Number(r.total_desa_kelurahan ?? 0), 0);
                 return (
                   <Polygon
                     key={key}
                     positions={poly.coordinates}
-                    pathOptions={{ color: poly.color, weight: 1.0, fillColor: poly.fillColor, fillOpacity: 1 }}
+                    // Warna asli tiap kecamatan (parity CI3), solid penuh tanpa transparan.
+                    pathOptions={{ color: poly.color, weight: 1.5, fillColor: poly.fillColor, fillOpacity: 1 }}
                   >
+                    <Tooltip direction="top" offset={[0, -8]} opacity={1} sticky>
+                      <strong>{name}</strong>{total > 0 ? ` — ${total} UMKM` : ''}
+                    </Tooltip>
                     <Popup maxWidth={360}>
                       <KecamatanPopup name={name} rows={rows} />
                     </Popup>
@@ -156,6 +161,10 @@ export function PetaPage() {
                 );
               })}
             </MapContainer>
+          </div>
+          {/* Keterangan peta */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-1 text-xs text-muted-foreground sm:px-0">
+            <span>Arahkan kursor ke kecamatan untuk melihat namanya — klik untuk rincian desa/kelurahan</span>
           </div>
         </CardContent>
       </Card>

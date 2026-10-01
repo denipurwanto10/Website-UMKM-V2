@@ -128,3 +128,19 @@ export async function countJenisUsaha(): Promise<unknown[]> {
   );
   return rows as unknown[];
 }
+
+/** Port legacy /api/jumlah-desa-per-kategori (tanpa filter status — parity CI3). */
+export async function countDesaPerKategori(): Promise<unknown[]> {
+  const [rows] = await pool.query(
+    `SELECT kategori_produk, COUNT(DISTINCT desa_kelurahan) AS jumlah_desa FROM umkm GROUP BY kategori_produk`,
+  );
+  return rows as unknown[];
+}
+
+/** Port legacy /api/jumlah-desa-per-kecamatan (tanpa filter status — parity CI3). */
+export async function countDesaPerKecamatan(): Promise<unknown[]> {
+  const [rows] = await pool.query(
+    `SELECT kecamatan, COUNT(DISTINCT desa_kelurahan) AS jumlah_desa FROM umkm GROUP BY kecamatan`,
+  );
+  return rows as unknown[];
+}

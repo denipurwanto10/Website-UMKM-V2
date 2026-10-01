@@ -96,7 +96,7 @@ export function PromosiPage() {
         </Button>
       </div>
 
-      <Input className="max-w-xs" placeholder="Cari username / fasilitasi…" value={q} onChange={(e) => setQ(e.target.value)} />
+      <Input className="w-full sm:max-w-xs" placeholder="Cari username / fasilitasi…" value={q} onChange={(e) => setQ(e.target.value)} />
 
       <Card>
         <CardHeader><CardTitle className="text-base">Daftar Promosi ({items.length})</CardTitle></CardHeader>
@@ -151,10 +151,10 @@ export function PromosiPage() {
       </Card>
 
       <Dialog open={dialog !== null} onOpenChange={(o) => !o && setDialog(null)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{dialog?.mode === 'create' ? 'Tambah Data Promosi' : 'Ubah Data Promosi'}</DialogTitle>
-            <DialogDescription>Satu data promosi per username (dijaga backend).</DialogDescription>
+        <DialogContent>
+          <DialogHeader className="pb-1">
+            <DialogTitle className="text-lg sm:text-xl">{dialog?.mode === 'create' ? 'Tambah Data Promosi' : 'Ubah Data Promosi'}</DialogTitle>
+            <DialogDescription>Isi kebutuhan promosi & bantuan — satu data per pemilik usaha.</DialogDescription>
           </DialogHeader>
           <form onSubmit={form.handleSubmit((v) => save.mutate(v))} className="flex flex-col gap-3">
             {isAdmin && dialog?.mode === 'create' && (

@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Eye, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Check, ChevronLeft, ChevronRight, Download, Eye, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
@@ -17,6 +17,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Textarea } from '../components/ui/textarea';
 import { useAuth } from '../hooks/useAuth';
 import { uploadUrl } from '../lib/uploads';
+import { csvFileName, downloadCsv } from '../lib/export';
 import { apiError } from '../services/api';
 import { createUmkm, deleteUmkm, listUmkm, umkmByStatus, umkmByUsername, updateUmkm } from '../services/umkm.service';
 import type { Umkm, UmkmStatus } from '../types';
@@ -94,9 +95,13 @@ export function UmkmPage() {
     setParams(params, { replace: true });
   }
   const [q, setQ] = useState('');
+  const [page, setPage] = useState(1);
   const [dialog, setDialog] = useState<null | { mode: 'create' } | { mode: 'edit'; umkm: Umkm }>(null);
   const [del, setDel] = useState<Umkm | null>(null);
   const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [reject, setReject] = useState<Umkm | null>(null);
+  const [rejectNote, setRejectNote] = useState('');
 
   const query = useQuery({
     queryKey: isAdmin ? ['umkm', status] : ['umkm-mine', user?.username],
@@ -116,11 +121,31 @@ export function UmkmPage() {
     );
   }, [query.data, q]);
 
+  // Paginasi client-side — konsisten dengan filter status dari URL.
+  const PAGE_SIZE = 10;
+  const pages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  const safePage = Math.min(page, pages);
+  const paged = items.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  useEffect(() => setPage(1), [q, status]);
+
+  function exportCsv() {
+    downloadCsv(
+      csvFileName(`data_umkm_${status}`),
+      ['ID', 'Nama Usaha', 'Merek', 'Kategori', 'Jenis', 'Kecamatan', 'Desa', 'Pemilik', 'Status'],
+      items.map((u): (string | number)[] => [
+        u.id, u.nama_usaha, u.nama_merek_produk, u.kategori_produk, u.jenis_usaha,
+        u.kecamatan, u.desa_kelurahan, u.fullname ?? u.username, u.status,
+      ]),
+    );
+  }
+
   const form = useForm<Form>({ resolver: zodResolver(schema) });
+  const editingUmkm = dialog?.mode === 'edit' ? dialog.umkm : null;
 
   function openCreate() {
     form.reset({ status: 'menunggu' });
     setPhoto(null);
+    setPhotoPreview(null);
     setDialog({ mode: 'create' });
   }
 
@@ -142,6 +167,7 @@ export function UmkmPage() {
       twitter: u.twitter ?? '', status: u.status, catatan: u.catatan ?? '',
     });
     setPhoto(null);
+    setPhotoPreview(null);
     setDialog({ mode: 'edit', umkm: u });
   }
 
@@ -165,8 +191,26 @@ export function UmkmPage() {
     onSuccess: () => {
       toast.success(dialog?.mode === 'create' ? 'UMKM berhasil ditambahkan' : 'UMKM berhasil diperbarui');
       setDialog(null);
+      if (photoPreview) URL.revokeObjectURL(photoPreview);
+      setPhotoPreview(null);
       qc.invalidateQueries({ queryKey: ['umkm'] });
       qc.invalidateQueries({ queryKey: ['umkm-mine'] });
+      qc.invalidateQueries({ queryKey: ['stats'] });
+    },
+    onError: (e) => toast.error(apiError(e)),
+  });
+
+  // Aksi cepat Admin: setujui/tolak langsung dari baris (pakai endpoint update).
+  const setStatusFast = useMutation({
+    mutationFn: ({ u, next, catatan }: { u: Umkm; next: UmkmStatus; catatan?: string }) =>
+      updateUmkm(u.id, { status: next, catatan: catatan ?? (next === 'disetujui' ? 'Terverifikasi' : 'Ditolak') }),
+    onSuccess: (_d, v) => {
+      toast.success(`${v.u.nama_usaha} ${v.next === 'disetujui' ? 'disetujui' : 'ditolak'}`);
+      setReject(null);
+      setRejectNote('');
+      qc.invalidateQueries({ queryKey: ['umkm'] });
+      qc.invalidateQueries({ queryKey: ['umkm-mine'] });
+      qc.invalidateQueries({ queryKey: ['stats'] });
     },
     onError: (e) => toast.error(apiError(e)),
   });
@@ -220,14 +264,19 @@ export function UmkmPage() {
             {isAdmin ? 'Verifikasi & kelola seluruh UMKM' : 'Kelola data usaha milik Anda'}
           </p>
         </div>
-        <Button size="sm" onClick={openCreate}><Plus className="h-4 w-4" /> Tambah</Button>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={exportCsv} disabled={items.length === 0}>
+            <Download className="h-4 w-4" /> <span className="hidden sm:inline">Ekspor</span> CSV
+          </Button>
+          <Button size="sm" onClick={openCreate}><Plus className="h-4 w-4" /> Tambah</Button>
+        </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <Input className="max-w-xs" placeholder="Cari usaha / merek / kategori…" value={q} onChange={(e) => setQ(e.target.value)} />
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <Input className="w-full sm:max-w-xs" placeholder="Cari usaha / merek / kategori…" value={q} onChange={(e) => setQ(e.target.value)} />
         {isAdmin && (
           <Select value={status} onValueChange={(v) => changeStatus(v as typeof status)}>
-            <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-44"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="semua">Semua status</SelectItem>
               <SelectItem value="menunggu">Menunggu</SelectItem>
@@ -239,12 +288,19 @@ export function UmkmPage() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Daftar UMKM ({items.length})</CardTitle></CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-base">Daftar UMKM ({items.length})</CardTitle>
+          {items.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              Hal. {safePage} dari {pages} · {paged.length} baris
+            </p>
+          )}
+        </CardHeader>
         <CardContent className="p-0 sm:p-6 sm:pt-0">
           {query.isLoading && <p className="p-4 text-sm text-muted-foreground">Memuat…</p>}
           {query.isError && <p className="p-4 text-sm text-destructive">{apiError(query.error)}</p>}
           {query.data && (
-            <Table>
+            <Table className="min-w-[560px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Usaha</TableHead>
@@ -254,7 +310,14 @@ export function UmkmPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {items.map((u) => (
+                {items.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={isAdmin ? 4 : 3} className="py-10 text-center text-sm text-muted-foreground">
+                      {q ? 'Tidak ada hasil untuk pencarian tersebut.' : 'Belum ada data usaha di daftar ini.'}
+                    </TableCell>
+                  </TableRow>
+                )}
+                {paged.map((u) => (
                   <TableRow key={u.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -270,6 +333,24 @@ export function UmkmPage() {
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
                         <Link to={`/usaha/${u.id}`}><Button variant="ghost" size="icon" aria-label="Lihat"><Eye className="h-4 w-4" /></Button></Link>
+                        {isAdmin && u.status === 'menunggu' && (
+                          <>
+                            <Button
+                              variant="ghost" size="icon" aria-label="Setujui"
+                              disabled={setStatusFast.isPending}
+                              onClick={() => setStatusFast.mutate({ u, next: 'disetujui' })}
+                            >
+                              <Check className="h-4 w-4 text-green-700 dark:text-green-400" />
+                            </Button>
+                            <Button
+                              variant="ghost" size="icon" aria-label="Tolak"
+                              disabled={setStatusFast.isPending}
+                              onClick={() => { setReject(u); setRejectNote(''); }}
+                            >
+                              <X className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </>
+                        )}
                         <Button variant="ghost" size="icon" onClick={() => openEdit(u)} aria-label="Ubah"><Pencil className="h-4 w-4" /></Button>
                         <Button variant="ghost" size="icon" onClick={() => setDel(u)} aria-label="Hapus"><Trash2 className="h-4 w-4 text-destructive" /></Button>
                       </div>
@@ -280,15 +361,33 @@ export function UmkmPage() {
             </Table>
           )}
         </CardContent>
+        {pages > 1 && (
+          <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-3 sm:px-6">
+            <p className="text-xs text-muted-foreground">
+              {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, items.length)} dari {items.length}
+            </p>
+            <div className="flex items-center gap-1">
+              <Button variant="outline" size="icon" disabled={safePage <= 1} onClick={() => setPage(safePage - 1)} aria-label="Halaman sebelumnya">
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <span className="min-w-16 text-center text-sm tabular-nums">
+                {safePage} / {pages}
+              </span>
+              <Button variant="outline" size="icon" disabled={safePage >= pages} onClick={() => setPage(safePage + 1)} aria-label="Halaman berikutnya">
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </Card>
 
       <Dialog open={dialog !== null} onOpenChange={(o) => !o && setDialog(null)}>
-        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{dialog?.mode === 'create' ? 'Tambah UMKM' : 'Ubah UMKM'}</DialogTitle>
-            <DialogDescription>Field bertanda * wajib diisi (sama seperti form CI3).</DialogDescription>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader className="pb-1">
+            <DialogTitle className="text-lg sm:text-xl">{dialog?.mode === 'create' ? 'Tambah Data UMKM' : 'Ubah Data UMKM'}</DialogTitle>
+            <DialogDescription>Isi data usaha dengan lengkap — tanda * wajib diisi.</DialogDescription>
           </DialogHeader>
-          <form onSubmit={form.handleSubmit((v) => save.mutate(v))} className="flex flex-col gap-4">
+          <form onSubmit={form.handleSubmit((v) => save.mutate(v))} className="flex flex-col gap-3 sm:gap-4">
             {isAdmin && dialog?.mode === 'create' && (
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="m-username">Username pemilik</Label>
@@ -348,13 +447,71 @@ export function UmkmPage() {
             )}
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="m-photo">Foto (jpg/png/gif, maks 2MB)</Label>
-              <Input id="m-photo" type="file" accept="image/jpeg,image/png,image/gif" onChange={(e) => setPhoto(e.target.files?.[0] ?? null)} />
+              <Input
+                id="m-photo" type="file" accept="image/jpeg,image/png,image/gif"
+                onChange={(e) => {
+                  const f = e.target.files?.[0] ?? null;
+                  setPhoto(f);
+                  if (photoPreview) URL.revokeObjectURL(photoPreview);
+                  setPhotoPreview(f ? URL.createObjectURL(f) : null);
+                }}
+              />
+              {(photoPreview || editingUmkm?.photo) && (
+                <img
+                  src={photoPreview ?? uploadUrl('umkm', editingUmkm!.photo)}
+                  alt="Pratinjau foto usaha"
+                  className="mt-1 max-h-40 w-full rounded-md border border-border bg-muted object-contain"
+                />
+              )}
+              {!photoPreview && editingUmkm?.photo === 'default.png' && (
+                <p className="text-xs text-muted-foreground">Belum ada foto — pilih file untuk menambahkan.</p>
+              )}
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setDialog(null)}>Batal</Button>
+              <Button
+                type="button" variant="outline"
+                onClick={() => {
+                  setDialog(null);
+                  if (photoPreview) URL.revokeObjectURL(photoPreview);
+                  setPhotoPreview(null);
+                }}
+              >
+                Batal
+              </Button>
               <Button type="submit" disabled={save.isPending}>{save.isPending ? 'Menyimpan…' : 'Simpan'}</Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={reject !== null} onOpenChange={(o) => { if (!o) { setReject(null); setRejectNote(''); } }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Tolak {reject?.nama_usaha}?</DialogTitle>
+            <DialogDescription>
+              Catatan ini dikirim ke pemilik usaha sebagai alasan penolakan — opsional, tapi disarankan diisi.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="reject-note">Catatan verifikasi</Label>
+            <Textarea
+              id="reject-note"
+              rows={3}
+              placeholder="Contoh: foto produk belum jelas, mohon lengkapi dokumen NIB."
+              value={rejectNote}
+              onChange={(e) => setRejectNote(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setReject(null); setRejectNote(''); }}>Batal</Button>
+            <Button
+              variant="destructive"
+              disabled={setStatusFast.isPending}
+              onClick={() => reject && setStatusFast.mutate({ u: reject, next: 'ditolak', catatan: rejectNote.trim() || 'Ditolak' })}
+            >
+              {setStatusFast.isPending ? 'Menyimpan…' : 'Tolak UMKM'}
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 

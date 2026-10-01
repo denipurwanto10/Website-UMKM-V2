@@ -1,4 +1,6 @@
 import {
+  countDesaPerKategori,
+  countDesaPerKecamatan,
   countDisetujuiPerKategori,
   countDisetujuiPerKecamatan,
   countJenisUsaha,
@@ -118,17 +120,20 @@ export async function deleteUmkmById(id: number, actor?: Actor): Promise<void> {
   await deleteUmkm(id);
 }
 
-/** Agregasi dashboard — port 8 endpoint count/* legacy. */
+/** Agregasi dashboard — port 10 endpoint count/* legacy. */
 export async function getStats() {
-  const [users, owners, admins, umkm, disetujui, perKategori, perKecamatan, jenisUsaha] = await Promise.all([
-    countUsers(),
-    countUsersByType('Owner'),
-    countUsersByType('Admin'),
-    countUmkm(),
-    countUmkmByStatus('disetujui'),
-    countDisetujuiPerKategori(),
-    countDisetujuiPerKecamatan(),
-    countJenisUsaha(),
-  ]);
-  return { users, owners, admins, umkm, disetujui, perKategori, perKecamatan, jenisUsaha };
+  const [users, owners, admins, umkm, disetujui, perKategori, perKecamatan, jenisUsaha, desaPerKategori, desaPerKecamatan] =
+    await Promise.all([
+      countUsers(),
+      countUsersByType('Owner'),
+      countUsersByType('Admin'),
+      countUmkm(),
+      countUmkmByStatus('disetujui'),
+      countDisetujuiPerKategori(),
+      countDisetujuiPerKecamatan(),
+      countJenisUsaha(),
+      countDesaPerKategori(),
+      countDesaPerKecamatan(),
+    ]);
+  return { users, owners, admins, umkm, disetujui, perKategori, perKecamatan, jenisUsaha, desaPerKategori, desaPerKecamatan };
 }

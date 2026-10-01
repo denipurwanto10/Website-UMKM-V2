@@ -13,6 +13,7 @@ import {
   User as UserIcon,
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { ThemeToggle } from '../components/ThemeToggle';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../components/ui/collapsible';
 import {
@@ -60,9 +61,9 @@ export function AdminLayout() {
     );
 
   const subStatuses = [
-    { value: 'menunggu', label: 'List UMKM Menunggu' },
-    { value: 'disetujui', label: 'List UMKM Disetujui' },
-    { value: 'ditolak', label: 'List UMKM Ditolak' },
+    { value: 'menunggu', label: 'Menunggu Verifikasi' },
+    { value: 'disetujui', label: 'Terverifikasi' },
+    { value: 'ditolak', label: 'Ditolak' },
   ] as const;
 
   const sidebar = (
@@ -79,7 +80,7 @@ export function AdminLayout() {
         </Link>
 
         <p className="px-3 pb-1 pt-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Menu
+          Kelola Data
         </p>
 
         {isAdmin ? (
@@ -87,7 +88,7 @@ export function AdminLayout() {
             <Collapsible open={msmeOpen} onOpenChange={setMsmeOpen}>
               <CollapsibleTrigger className={cn(itemCls(loc.pathname === '/umkm'), 'w-full')}>
                 <Store className="h-4 w-4" />
-                <span className="flex-1 text-left">MSME Data</span>
+                <span className="flex-1 text-left">Data UMKM</span>
                 <ChevronDown className={cn('h-4 w-4 transition-transform', msmeOpen && 'rotate-180')} />
               </CollapsibleTrigger>
               <CollapsibleContent className="ms-4 flex flex-col gap-1 border-s border-border ps-2 pt-1">
@@ -105,10 +106,10 @@ export function AdminLayout() {
             </Collapsible>
 
             <Link to="/promosi" onClick={() => setOpen(false)} className={itemCls(loc.pathname === '/promosi')}>
-              <Megaphone className="h-4 w-4" /> Promotion
+              <Megaphone className="h-4 w-4" /> Promosi & Bantuan
             </Link>
             <Link to="/users" onClick={() => setOpen(false)} className={itemCls(loc.pathname === '/users')}>
-              <Users className="h-4 w-4" /> Users
+              <Users className="h-4 w-4" /> Pengguna
             </Link>
           </>
         ) : (
@@ -160,7 +161,8 @@ export function AdminLayout() {
           <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpen(!open)} aria-label="Menu">
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
-          <div className="ms-auto">
+          <div className="ms-auto flex items-center gap-1">
+            <ThemeToggle />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
