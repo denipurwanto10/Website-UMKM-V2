@@ -59,36 +59,36 @@ Masalah wajib perbaiki saat migrasi: SECRET_KEY hardcoded, `pool` tanpa pool opt
 
 | CI3 Route | Controller::method | React Route (usulan) | New API (usulan, reuse existing) | Status |
 |---|---|---|---|---|
-| `/` | Welcome::index (4 random disetujui) | `/` Home | GET /api/umkm/status/disetujui | Pending |
-| `/all` | Auth::all (filter kategori/nama) | `/umkm` | GET /api/umkm/status/disetujui (+query ?kategori=&nama_usaha=&merek=) | Pending |
-| `/cari?...` | Auth::cari | `/cari` (bisa gabung /umkm) | sama (filter server-side — perbaikan dari filter in-PHP) | Pending |
-| `/peta` | Auth::peta | `/peta` | GET /api/umkm/status/disetujui/count + agregasi kecamatan | Pending |
-| `/detail/:num` | Auth::detail | `/umkm/:id` | GET /api/umkm/detail/:id | Pending |
-| `/login`, `/auth/form_login`, `/login/submit` | Auth::form_login/login | `/login` | POST /api/auth/login (dari POST /api/login) | Pending |
-| `/register` | Auth::register | `/register` | POST /api/auth/register (dari POST /api/register) | Pending |
-| `/logout` | Auth::logout (sess_destroy) | action logout (hapus token) | POST /api/auth/logout (stateless, opsional) | Pending |
-| `/dashboard` | Dashboard::index | `/dashboard` (admin layout) | GET /api/count-users, /count-umkm, /count-owners, agregasi | Pending |
-| `/api/stats` | Api::stats (proxy counts) | — (diganti TanStack Query langsung ke Node) | GET /api/stats (pertahankan proxy bila CORS dibutuhkan) | Pending |
-| `/users`, `/users1` | Users::index/index1 | `/users` (1 page + filter role, ganti users1) | GET /api/users | Pending |
-| `/users/create`, `/users/create1` | Users::create/create1 | `/users/new` | — (form) | Pending |
-| `/users/store`, `/users/store1` | Users::store/store1 | action | POST /api/users | Pending |
-| `/users/edit/*`, `/users/edit1/*` | Users::edit/edit1 | `/users/:username/edit` | GET /api/users/:username | Pending |
-| `/users/update/*`, `/users/update1/*` | Users::update/update1 | action | PUT /api/users/:username | Pending |
-| `/users/delete/*`, `/users/delete1/*` | Users::delete/delete1 | action | DELETE /api/users/:username | Pending |
-| `/profil` | Users::profil | `/profil` | GET /api/users/:username (session user) | Pending |
-| `/umkm/menunggu|disetujui|ditolak` | Umkm::menunggu/disetujui/ditolak | `/umkm/menunggu`, `/umkm/disetujui`, `/umkm/ditolak` (atau 1 page + tab status) | GET /api/umkm/status/:status | Pending |
-| `/data_umkm` | Umkm::data_umkm (milik owner) | `/umkm-saya` | GET /api/umkm/user/:username | Pending |
-| `/umkm/create`, `/umkm/create1`, `/umkm/create_umkm` | Umkm::create/create1/create_umkm | `/umkm/new` | GET /api/users (dropdown username, admin saja) | Pending |
-| `/umkm/store`, `/umkm/store1` | Umkm::store/store1 | action | POST /api/umkm | Pending |
-| `/umkm/edit/:num`, `/umkm/edit1/:num` | Umkm::edit/edit1 | `/umkm/:id/edit` | GET /api/umkm/:id | Pending |
-| `/umkm/update/:num`, `/umkm/update1/:num` | Umkm::update/update1 | action | PUT /api/umkm/:id | Pending |
-| `/umkm/delete/:num`, `/umkm/delete1/:num`, `/umkm/disetujui/delete/:num`, `/umkm/ditolak/delete/:num` | Umkm::delete* | action | DELETE /api/umkm/:id | Pending |
-| `/promosi`, `/promosi1` | Promosi::index/index1 | `/promosi` (1 page + filter owner) | GET /api/promosi | Pending |
-| `/promosi/create`, `/promosi/create1` | Promosi::create/create1 | `/promosi/new` | GET /api/users | Pending |
-| `/promosi/store`, `/promosi/store1` | Promosi::store/store1 | action | POST /api/promosi | Pending |
-| `/promosi/edit/:num`, edit1 | Promosi::edit/edit1 | `/promosi/:id/edit` | GET /api/promosi/:id | Pending |
-| `/promosi/update/:num`, update1 | Promosi::update/update1 | action | PUT /api/promosi/:id | Pending |
-| `/promosi/delete/:num`, delete1 | Promosi::delete/delete1 | action | DELETE /api/promosi/:id | Pending |
+| `/` | Welcome::index (4 random disetujui) | `/` Home | GET /api/umkm/status/disetujui | Done |
+| `/all` | Auth::all (filter kategori/nama) | `/umkm` | GET /api/umkm/status/disetujui (+query ?kategori=&nama_usaha=&merek=) | Done |
+| `/cari?...` | Auth::cari | `/cari` (bisa gabung /umkm) | sama (filter server-side — perbaikan dari filter in-PHP) | Done |
+| `/peta` | Auth::peta | `/peta` | GET /api/umkm/status/disetujui/count + agregasi kecamatan | Done |
+| `/detail/:num` | Auth::detail | `/umkm/:id` | GET /api/umkm/detail/:id | Done |
+| `/login`, `/auth/form_login`, `/login/submit` | Auth::form_login/login | `/login` | POST /api/auth/login (dari POST /api/login) | Done |
+| `/register` | Auth::register | `/register` | POST /api/auth/register (dari POST /api/register) | Done |
+| `/logout` | Auth::logout (sess_destroy) | action logout (hapus token) | POST /api/auth/logout (stateless, opsional) | Done |
+| `/dashboard` | Dashboard::index | `/dashboard` (admin layout) | GET /api/count-users, /count-umkm, /count-owners, agregasi | Done |
+| `/api/stats` | Api::stats (proxy counts) | — (diganti TanStack Query langsung ke Node) | GET /api/stats (pertahankan proxy bila CORS dibutuhkan) | Done |
+| `/users`, `/users1` | Users::index/index1 | `/users` (1 page + filter role, ganti users1) | GET /api/users | Done |
+| `/users/create`, `/users/create1` | Users::create/create1 | `/users/new` | — (form) | Done |
+| `/users/store`, `/users/store1` | Users::store/store1 | action | POST /api/users | Done |
+| `/users/edit/*`, `/users/edit1/*` | Users::edit/edit1 | `/users/:username/edit` | GET /api/users/:username | Done |
+| `/users/update/*`, `/users/update1/*` | Users::update/update1 | action | PUT /api/users/:username | Done |
+| `/users/delete/*`, `/users/delete1/*` | Users::delete/delete1 | action | DELETE /api/users/:username | Done |
+| `/profil` | Users::profil | `/profil` | GET /api/users/:username (session user) | Done |
+| `/umkm/menunggu|disetujui|ditolak` | Umkm::menunggu/disetujui/ditolak | `/umkm/menunggu`, `/umkm/disetujui`, `/umkm/ditolak` (atau 1 page + tab status) | GET /api/umkm/status/:status | Done |
+| `/data_umkm` | Umkm::data_umkm (milik owner) | `/umkm-saya` | GET /api/umkm/user/:username | Done |
+| `/umkm/create`, `/umkm/create1`, `/umkm/create_umkm` | Umkm::create/create1/create_umkm | `/umkm/new` | GET /api/users (dropdown username, admin saja) | Done |
+| `/umkm/store`, `/umkm/store1` | Umkm::store/store1 | action | POST /api/umkm | Done |
+| `/umkm/edit/:num`, `/umkm/edit1/:num` | Umkm::edit/edit1 | `/umkm/:id/edit` | GET /api/umkm/:id | Done |
+| `/umkm/update/:num`, `/umkm/update1/:num` | Umkm::update/update1 | action | PUT /api/umkm/:id | Done |
+| `/umkm/delete/:num`, `/umkm/delete1/:num`, `/umkm/disetujui/delete/:num`, `/umkm/ditolak/delete/:num` | Umkm::delete* | action | DELETE /api/umkm/:id | Done |
+| `/promosi`, `/promosi1` | Promosi::index/index1 | `/promosi` (1 page + filter owner) | GET /api/promosi | Done |
+| `/promosi/create`, `/promosi/create1` | Promosi::create/create1 | `/promosi/new` | GET /api/users | Done |
+| `/promosi/store`, `/promosi/store1` | Promosi::store/store1 | action | POST /api/promosi | Done |
+| `/promosi/edit/:num`, edit1 | Promosi::edit/edit1 | `/promosi/:id/edit` | GET /api/promosi/:id | Done |
+| `/promosi/update/:num`, update1 | Promosi::update/update1 | action | PUT /api/promosi/:id | Done |
+| `/promosi/delete/:num`, delete1 | Promosi::delete/delete1 | action | DELETE /api/promosi/:id | Done |
 
 Catatan: rute `*1` (owner) dilebur — 1 React page + filter `?mine=` / role guard. Jangan port duplikasi view `users1/promosi1/create_*1/edit_*1` 1:1.
 
@@ -125,17 +125,17 @@ Business logic yang TIDAK BOLEH hilang saat port form: konstruksi link marketpla
 
 | # | Feature | Files (CI3 + Node) | Tables | Dependencies | Complexity | Status |
 |---|---|---|---|---|---|---|
-| 1 | Auth: login/logout/session+JWT | Auth::login/logout, form_login view, index.js POST /api/login + verifyToken | users | bcrypt, JWT, CI session | Sedang (secret hardcoded, regex-block SQLi di CI3 harus jadi validasi benar) | Pending |
-| 2 | Register Owner publik | Auth::register, register view, index.js POST /api/register | users | bcrypt | Rendah–Sedang | Pending |
-| 3 | Users CRUD + foto (Admin & Owner) | Users.php (534) full, 5 views user | users | uploads/users/, CI upload lib | Sedang (duplikasi *1, upload encrypt_name) | Pending |
-| 4 | UMKM lifecycle: create→menunggu→disetujui/ditolak + catatan | Umkm.php (926!) full, 8 views umkm | umkm (+users untuk dropdown) | uploads/umkm?, link marketplace | Tinggi (form 30+ field, file terbesar ke-2) | Pending |
-| 5 | UMKM milik-owner (data_umkm) | Umkm::data_umkm, data_umkm.php | umkm | JWT/session username | Rendah (filter username) | Pending |
-| 6 | Promosi: 1 per username, syarat UMKM disetujui | Promosi.php (594) full, 6 views promosi | promosi, users, umkm (cek) | — | Sedang (aturan bisnis unik) | Pending |
-| 7 | Dashboard + counts/agregasi | Dashboard.php, dashboard.php, Api.php, 8 endpoint count/* | users, umkm | Chart lib (pilih 1) | Rendah–Sedang | Pending |
-| 8 | Publik: home/all/cari/detail | Welcome.php, Auth::all/cari/detail, 4 views | umkm | — | Rendah–Sedang | Pending |
-| 9 | Peta QGIS/Leaflet per kecamatan | Auth::peta, peta.php (9631 baris!), QGIS/*.shp, assets/map/ | umkm (agregasi kecamatan) | Leaflet + shapefile→GeoJSON | Tinggi (file terbesar, risiko paling besar) | Pending — spike dulu |
-| 10 | Upload foto (user+produk) | Users::store/update (CI upload), Umkm store/update | users.photo, umkm.photo | uploads/, MIME+size validation | Sedang | Pending |
-| 11 | Profil user | Users::profil, profil.php | users | — | Rendah | Pending |
+| 1 | Auth: login/logout/session+JWT | Auth::login/logout, form_login view, index.js POST /api/login + verifyToken | users | bcrypt, JWT, CI session | Sedang (secret hardcoded, regex-block SQLi di CI3 harus jadi validasi benar) | Done |
+| 2 | Register Owner publik | Auth::register, register view, index.js POST /api/register | users | bcrypt | Rendah–Sedang | Done |
+| 3 | Users CRUD + foto (Admin & Owner) | Users.php (534) full, 5 views user | users | uploads/users/, CI upload lib | Sedang (duplikasi *1, upload encrypt_name) | Done |
+| 4 | UMKM lifecycle: create→menunggu→disetujui/ditolak + catatan | Umkm.php (926!) full, 8 views umkm | umkm (+users untuk dropdown) | uploads/umkm?, link marketplace | Tinggi (form 30+ field, file terbesar ke-2) | Done |
+| 5 | UMKM milik-owner (data_umkm) | Umkm::data_umkm, data_umkm.php | umkm | JWT/session username | Rendah (filter username) | Done |
+| 6 | Promosi: 1 per username, syarat UMKM disetujui | Promosi.php (594) full, 6 views promosi | promosi, users, umkm (cek) | — | Sedang (aturan bisnis unik) | Done |
+| 7 | Dashboard + counts/agregasi | Dashboard.php, dashboard.php, Api.php, 8 endpoint count/* | users, umkm | Chart lib (pilih 1) | Rendah–Sedang | Done |
+| 8 | Publik: home/all/cari/detail | Welcome.php, Auth::all/cari/detail, 4 views | umkm | — | Rendah–Sedang | Done |
+| 9 | Peta QGIS/Leaflet per kecamatan | Auth::peta, peta.php (9631 baris!), QGIS/*.shp | umkm (agregasi kecamatan) | Leaflet + poligon diekstrak ke JSON (identik CI3) | Tinggi | Done (PetaPage + kecamatan-polygons.json) |
+| 10 | Upload foto (user+produk) | Users::store/update (CI upload), Umkm store/update | users.photo, umkm.photo | uploads/, MIME+size validation | Sedang | Done |
+| 11 | Profil user | Users::profil, profil.php | users | — | Rendah | Done |
 | 12 | platform table | HANYA di skripsi.sql, tanpa endpoint/view | platform | — | UNKNOWN — NEEDS REVIEW | Blocked (tanya owner) |
 
 Tidak ada: laporan PDF/Excel/CSV, cron, websocket, integrasi API eksternal, CI3 model/library/hook kustom (libraries/ & hooks/ kosong, helper hanya curl_helper.php tak terpakai di controller).
