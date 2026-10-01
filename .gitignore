@@ -24,6 +24,9 @@ build/
 .env.local
 .env.*.local
 
+# Database dump — data asli (nama/HP/email/NIB + hash password), jangan push ke GitHub
+database/*.sql
+
 uploads/users/*
 !uploads/users/index.html
 uploads/umkm/*
