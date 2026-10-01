@@ -14,6 +14,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
+import { TableEmpty } from '../components/TableEmpty';
 import { Textarea } from '../components/ui/textarea';
 import { useAuth } from '../hooks/useAuth';
 import { uploadUrl } from '../lib/uploads';
@@ -297,9 +298,6 @@ export function UmkmPage() {
           )}
         </CardHeader>
         <CardContent className="p-0 sm:p-6 sm:pt-0">
-          {query.isLoading && <p className="p-4 text-sm text-muted-foreground">Memuat…</p>}
-          {query.isError && <p className="p-4 text-sm text-destructive">{apiError(query.error)}</p>}
-          {query.data && (
             <Table className="min-w-[560px]">
               <TableHeader>
                 <TableRow>
@@ -310,12 +308,25 @@ export function UmkmPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {items.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={isAdmin ? 4 : 3} className="py-10 text-center text-sm text-muted-foreground">
-                      {q ? 'Tidak ada hasil untuk pencarian tersebut.' : 'Belum ada data usaha di daftar ini.'}
-                    </TableCell>
-                  </TableRow>
+                {query.isLoading && <TableEmpty colSpan={isAdmin ? 4 : 3} state="loading" />}
+                {query.isError && (
+                  <TableEmpty
+                    colSpan={isAdmin ? 4 : 3}
+                    state="error"
+                    message={apiError(query.error)}
+                    action={
+                      <Button size="sm" variant="outline" onClick={() => query.refetch()}>
+                        Coba lagi
+                      </Button>
+                    }
+                  />
+                )}
+                {query.data && items.length === 0 && (
+                  <TableEmpty
+                    colSpan={isAdmin ? 4 : 3}
+                    state="empty"
+                    message={q ? 'Tidak ada hasil untuk pencarian tersebut.' : 'Belum ada data usaha di daftar ini.'}
+                  />
                 )}
                 {paged.map((u) => (
                   <TableRow key={u.id}>
@@ -359,7 +370,6 @@ export function UmkmPage() {
                 ))}
               </TableBody>
             </Table>
-          )}
         </CardContent>
         {pages > 1 && (
           <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-3 sm:px-6">

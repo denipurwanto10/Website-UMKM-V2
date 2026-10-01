@@ -13,6 +13,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
+import { TableEmpty } from '../components/TableEmpty';
 import { apiError } from '../services/api';
 import { createUser, deleteUser, listUsers, updateUser } from '../services/user.service';
 import type { User } from '../types';
@@ -116,10 +117,7 @@ export function UsersPage() {
       <Card>
         <CardHeader><CardTitle className="text-base">Daftar Pengguna</CardTitle></CardHeader>
         <CardContent className="p-0 sm:p-6 sm:pt-0">
-          {users.isLoading && <p className="p-4 text-sm text-muted-foreground">Memuat…</p>}
-          {users.isError && <p className="p-4 text-sm text-destructive">{apiError(users.error)}</p>}
-          {users.data && (
-            <Table className="min-w-[600px]">
+          <Table className="min-w-[600px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Foto</TableHead>
@@ -131,7 +129,21 @@ export function UsersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {users.data.map((u) => (
+                {users.isLoading && <TableEmpty colSpan={6} state="loading" />}
+                {users.isError && (
+                  <TableEmpty
+                    colSpan={6}
+                    state="error"
+                    message={apiError(users.error)}
+                    action={
+                      <Button size="sm" variant="outline" onClick={() => users.refetch()}>
+                        Coba lagi
+                      </Button>
+                    }
+                  />
+                )}
+                {users.data?.length === 0 && <TableEmpty colSpan={6} state="empty" message="Belum ada pengguna terdaftar." />}
+                {users.data?.map((u) => (
                   <TableRow key={u.username}>
                     <TableCell>
                       <img src={uploadUrl('users', u.photo)} alt={u.username} className="h-9 w-9 rounded-full object-cover" loading="lazy" />
@@ -158,8 +170,7 @@ export function UsersPage() {
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>
-          )}
+          </Table>
         </CardContent>
       </Card>
 

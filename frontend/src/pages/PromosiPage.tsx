@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { TableEmpty } from '../components/TableEmpty';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { Input } from '../components/ui/input';
@@ -101,21 +102,37 @@ export function PromosiPage() {
       <Card>
         <CardHeader><CardTitle className="text-base">Daftar Promosi ({items.length})</CardTitle></CardHeader>
         <CardContent className="p-0 sm:p-6 sm:pt-0">
-          {query.isLoading && <p className="p-4 text-sm text-muted-foreground">Memuat…</p>}
-          {query.isError && <p className="p-4 text-sm text-destructive">{apiError(query.error)}</p>}
-          {query.data && items.length === 0 && <p className="p-4 text-sm text-muted-foreground">Belum ada data promosi.</p>}
-          {items.length > 0 && (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Pemilik</TableHead>
-                  <TableHead className="hidden md:table-cell">Fasilitasi</TableHead>
-                  <TableHead className="hidden lg:table-cell">Bantuan</TableHead>
-                  <TableHead className="text-right">Aksi</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {items.map((p) => (
+                  <Table className="min-w-[520px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Pemilik</TableHead>
+                        <TableHead className="hidden md:table-cell">Fasilitasi</TableHead>
+                        <TableHead className="hidden lg:table-cell">Bantuan</TableHead>
+                        <TableHead className="text-right">Aksi</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {query.isLoading && <TableEmpty colSpan={4} state="loading" />}
+                      {query.isError && (
+                        <TableEmpty
+                          colSpan={4}
+                          state="error"
+                          message={apiError(query.error)}
+                          action={
+                            <Button size="sm" variant="outline" onClick={() => query.refetch()}>
+                              Coba lagi
+                            </Button>
+                          }
+                        />
+                      )}
+                      {query.data && items.length === 0 && (
+                        <TableEmpty
+                          colSpan={4}
+                          state="empty"
+                          message={q ? 'Tidak ada hasil untuk pencarian tersebut.' : 'Belum ada data promosi.'}
+                        />
+                      )}
+                      {items.map((p) => (
                   <TableRow key={p.id}>
                     <TableCell>
                       <p className="font-medium">{p.fullname ?? p.username}</p>
@@ -144,9 +161,8 @@ export function PromosiPage() {
                     </TableCell>
                   </TableRow>
                 ))}
-              </TableBody>
-            </Table>
-          )}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 
