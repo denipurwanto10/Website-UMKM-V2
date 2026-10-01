@@ -1,0 +1,14 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /skripsi/
+
+    # Jangan rewrite file/direktori yang benar-benar ada
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>
+
+# Proteksi file sensitif
+<FilesMatch "^(composer\.json|composer\.lock|package\.json)$">
+    Require all denied
+</FilesMatch>
