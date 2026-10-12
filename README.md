@@ -3,7 +3,7 @@
 Aplikasi pendataan dan direktori UMKM: portal publik (peta sebaran Leaflet + direktori usaha),
 dashboard admin (verifikasi, statistik, grafik), dan portal pemilik usaha (CRUD data UMKM &
 promosi). Tema hitam-putih, responsif mobile, dark/light mode.
-
+ 
 ## Tech Stack
 
 | Lapisan | Teknologi |
