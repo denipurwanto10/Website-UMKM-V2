@@ -1,0 +1,316 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400..600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Newsreader", ui-serif, Georgia, "Times New Roman", serif;
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--card);
+  --color-popover-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger-soft: var(--danger-soft);
+  --color-deep: var(--deep);
+}
+
+/*
+  Palet: batu netral kehijauan + hijau pinus (dataran tinggi teh Bandung selatan).
+  Satu-satunya aksen adalah --primary; ganti nilainya untuk mengubah seluruh nuansa situs.
+*/
+/*
+  Palet: emerald segar di atas netral kehijauan, dengan satu panel "deep forest" untuk aksen gelap.
+  Ganti --primary dan --deep untuk mengubah seluruh nuansa situs.
+*/
+:root {
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --radius: 0.75rem;
+
+  --background: #f3f7f5;
+  --foreground: #0c1a15;
+  --card: #ffffff;
+  --card-foreground: #0c1a15;
+  --primary: #0a7a59;
+  --primary-foreground: #ffffff;
+  --secondary: #e8efec;
+  --secondary-foreground: #0c1a15;
+  --muted: #ebf1ee;
+  --muted-foreground: #566a62;
+  --accent: #d8f1e6;
+  --accent-foreground: #07402f;
+  --destructive: #cf3a2e;
+  --border: #dbe5e0;
+  --input: #cbd8d1;
+  --ring: #12a074;
+  --deep: #05261c;
+
+  --success: #0a7a59;
+  --success-soft: #d8f1e6;
+  --warning: #96580a;
+  --warning-soft: #fcefcf;
+  --danger-soft: #fde3df;
+}
+
+.dark {
+  --background: #06100c;
+  --foreground: #e3f0ea;
+  --card: #0d1814;
+  --card-foreground: #e3f0ea;
+  --primary: #34d399;
+  --primary-foreground: #03150d;
+  --secondary: #13201a;
+  --secondary-foreground: #e3f0ea;
+  --muted: #13201a;
+  --muted-foreground: #85a095;
+  --accent: rgb(52 211 153 / 0.12);
+  --accent-foreground: #c9f4e1;
+  --destructive: #f2877c;
+  --border: rgb(255 255 255 / 0.08);
+  --input: rgb(255 255 255 / 0.14);
+  --ring: #34d399;
+  --deep: #0a1f18;
+
+  --success: #5fe0aa;
+  --success-soft: rgb(52 211 153 / 0.14);
+  --warning: #f0c56b;
+  --warning-soft: rgb(240 197 107 / 0.13);
+  --danger-soft: rgb(242 135 124 / 0.14);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  h1, h2 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 22%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  button, a, [role="button"] {
+    -webkit-tap-highlight-color: transparent;
+  }
+  img {
+    -webkit-user-drag: none;
+  }
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fade-out { from { opacity: 1; } to { opacity: 0; } }
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.96) translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes pop-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: scale(0.97); }
+}
+@keyframes dialog-in {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes dialog-out {
+  from { opacity: 1; transform: none; }
+  to   { opacity: 0; transform: scale(0.97) translateY(6px); }
+}
+@keyframes sheet-in  { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes sheet-out { from { transform: none; } to { transform: translateY(100%); } }
+@keyframes collapse-down {
+  from { height: 0; opacity: 0; }
+  to   { height: var(--radix-collapsible-content-height); opacity: 1; }
+}
+@keyframes collapse-up {
+  from { height: var(--radix-collapsible-content-height); opacity: 1; }
+  to   { height: 0; opacity: 0; }
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+@keyframes grow-x  { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes tile-in {
+  from { clip-path: inset(0 0 100% 0 round 1rem); }
+  to   { clip-path: inset(0 0 0 0 round 1rem); }
+}
+@keyframes tile-settle {
+  from { transform: scale(1.14); }
+  to   { transform: scale(1); }
+}
+@keyframes icon-swap {
+  from { opacity: 0; transform: rotate(-70deg) scale(0.6); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---------- Utilitas animasi ---------- */
+.page-enter { animation: page-in 520ms var(--ease) both; }
+.hero-rise  { animation: rise 900ms var(--ease) var(--d, 0ms) both; }
+.auth-rise  { animation: rise 700ms var(--ease) 120ms both; }
+.field-error { animation: row-in 260ms var(--ease) both; }
+.icon-swap  { animation: icon-swap 420ms var(--ease) both; }
+.grow-x     { transform-origin: left; animation: grow-x 1000ms var(--ease) 200ms both; }
+
+.mosaic-tile { animation: tile-in 1200ms var(--ease) var(--d, 0ms) both; }
+.mosaic-tile img { animation: tile-settle 1600ms var(--ease) var(--d, 0ms) both; }
+
+/* Muncul saat masuk viewport (lihat lib/motion.tsx) */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 800ms var(--ease) var(--d, 0ms), transform 800ms var(--ease) var(--d, 0ms);
+}
+.reveal[data-in="true"] { opacity: 1; transform: none; }
+
+/* Baris tabel masuk berurutan */
+tbody tr { animation: row-in 460ms var(--ease) both; }
+tbody tr:nth-child(2)  { animation-delay: 40ms; }
+tbody tr:nth-child(3)  { animation-delay: 80ms; }
+tbody tr:nth-child(4)  { animation-delay: 120ms; }
+tbody tr:nth-child(5)  { animation-delay: 160ms; }
+tbody tr:nth-child(6)  { animation-delay: 200ms; }
+tbody tr:nth-child(7)  { animation-delay: 240ms; }
+tbody tr:nth-child(8)  { animation-delay: 280ms; }
+tbody tr:nth-child(9)  { animation-delay: 320ms; }
+tbody tr:nth-child(n+10) { animation-delay: 360ms; }
+
+/* Skeleton shimmer */
+.skeleton {
+  background: linear-gradient(
+    100deg,
+    var(--muted) 30%,
+    color-mix(in oklab, var(--muted), var(--foreground) 7%) 50%,
+    var(--muted) 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.7s linear infinite;
+}
+
+/* Radix: overlay, dialog/sheet, popover, collapsible */
+.ui-overlay[data-state="open"]   { animation: fade-in 280ms var(--ease) both; }
+.ui-overlay[data-state="closed"] { animation: fade-out 200ms var(--ease) both; }
+
+.ui-dialog[data-state="open"]   { animation: dialog-in 360ms var(--ease) both; }
+.ui-dialog[data-state="closed"] { animation: dialog-out 200ms var(--ease) both; }
+@media (max-width: 639px) {
+  .ui-dialog[data-state="open"]   { animation: sheet-in 460ms var(--ease) both; }
+  .ui-dialog[data-state="closed"] { animation: sheet-out 280ms var(--ease) both; }
+}
+
+.ui-pop { transform-origin: var(--radix-popper-transform-origin, top); }
+.ui-pop[data-state="open"]   { animation: pop-in 200ms var(--ease) both; }
+.ui-pop[data-state="closed"] { animation: pop-out 130ms ease-in both; }
+
+.ui-collapse { overflow: hidden; }
+.ui-collapse[data-state="open"]   { animation: collapse-down 320ms var(--ease); }
+.ui-collapse[data-state="closed"] { animation: collapse-up 240ms var(--ease); }
+
+/* Transisi tema halus (kelas dipasang sebentar oleh ThemeProvider) */
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition: background-color 380ms ease, color 380ms ease, border-color 380ms ease, fill 380ms ease, stroke 380ms ease !important;
+}
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ---------- Peta Leaflet ---------- */
+.leaflet-container { font-family: inherit; background: var(--muted); }
+.leaflet-container path.leaflet-interactive:focus,
+.leaflet-container svg:focus,
+.leaflet-interactive:focus { outline: none !important; }
+.leaflet-container path.leaflet-interactive { transition: stroke-width 200ms ease, filter 200ms ease; }
+.leaflet-popup-content-wrapper {
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 48px -16px rgb(0 0 0 / 0.3);
+}
+.leaflet-popup-tip { background: var(--card); }
+.leaflet-popup-content { margin: 16px 18px; }
+.leaflet-container a.leaflet-popup-close-button { color: var(--muted-foreground); top: 8px; right: 8px; }
+.leaflet-tooltip {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: 0 10px 24px -10px rgb(0 0 0 / 0.3);
+  padding: 6px 10px;
+  font-weight: 500;
+}
+.leaflet-tooltip-top:before { border-top-color: var(--card); }
+.leaflet-bar { border: 1px solid var(--border) !important; border-radius: 12px !important; overflow: hidden; box-shadow: none !important; }
+.leaflet-bar a { background: var(--card); color: var(--foreground); border-bottom-color: var(--border); }
+.leaflet-bar a:hover { background: var(--accent); }
+.leaflet-control-layers {
+  border-radius: 12px !important;
+  border: 1px solid var(--border) !important;
+  background: var(--card); color: var(--foreground);
+  box-shadow: none !important;
+}
+.leaflet-control-attribution { background: color-mix(in oklab, var(--card) 80%, transparent) !important; color: var(--muted-foreground); }
+.leaflet-control-attribution a { color: var(--muted-foreground); }
+.dark .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.86) contrast(0.9) saturate(0.55); }
+
+/* ---------- Hormati preferensi gerak ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}

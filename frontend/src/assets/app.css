@@ -1,0 +1,339 @@
+/* ============================================================
+   Portal UMKM Kab. Bandung — design system profesional
+   - Default: LIGHT mode. Dark mode via [data-theme="dark"].
+   - Bootstrap 5.3 ikut adaptif lewat data-bs-theme (diatur
+     ThemeContext + skrip anti-kedip di index.html).
+   - Area gelap yang disengaja (navbar, hero, footer) tetap
+     gelap di kedua mode demi konsistensi brand.
+   ============================================================ */
+
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --brand: #16a34a;
+  --brand-strong: #15803d;
+  --brand-deep: #0b3614;
+  --accent: #d97706;
+
+  --bg: #f2f5f3;
+  --surface: #ffffff;
+  --surface-2: #f6f9f7;
+  --ink: #182420;
+  --muted: #5f7167;
+  --line: #e3e9e5;
+  --line-strong: #cdd7d1;
+  --input-bg: #ffffff;
+
+  --nav-bg: rgba(11, 54, 20, 0.96);
+  --footer-bg: #0b3614;
+  --hero-bg:
+    radial-gradient(900px 320px at 85% -10%, rgba(245, 158, 11, 0.28), transparent 60%),
+    radial-gradient(700px 300px at 10% 110%, rgba(255, 255, 255, 0.08), transparent 60%),
+    linear-gradient(135deg, #0b3614 0%, #14532d 55%, #16a34a 100%);
+
+  --admin-bg: linear-gradient(180deg, #f2f5f3 0%, #e9efec 100%);
+  --sidebar-bg: #ffffff;
+  --admin-ink: #182420;
+  --admin-ink-soft: #5f7167;
+  --topbar-bg: rgba(255, 255, 255, 0.9);
+  --table-head-bg: #eef3f0;
+
+  --auth-bg:
+    radial-gradient(800px 380px at 50% -10%, rgba(22, 163, 74, 0.16), transparent 60%),
+    linear-gradient(180deg, #eef4f0, #dce8e0);
+  --link: #15803d;
+
+  --radius: 14px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 1px 2px rgba(20, 45, 30, 0.07);
+  --shadow-md: 0 10px 28px rgba(20, 45, 30, 0.12);
+  --shadow-lg: 0 18px 50px rgba(20, 45, 30, 0.16);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --brand: #22c55e;
+  --brand-strong: #4ade80;
+  --brand-deep: #071f0f;
+  --accent: #fbbf24;
+
+  --bg: #0c120e;
+  --surface: #131b15;
+  --surface-2: #182119;
+  --ink: #e9f1ec;
+  --muted: #9db3a6;
+  --line: #233026;
+  --line-strong: #35473c;
+  --input-bg: #1a241e;
+
+  --nav-bg: rgba(7, 31, 15, 0.96);
+  --footer-bg: #071f0f;
+  --hero-bg:
+    radial-gradient(900px 320px at 85% -10%, rgba(251, 191, 36, 0.14), transparent 60%),
+    radial-gradient(700px 300px at 10% 110%, rgba(34, 197, 94, 0.12), transparent 60%),
+    linear-gradient(135deg, #071f0f 0%, #0b3614 55%, #14532d 100%);
+
+  --admin-bg:
+    radial-gradient(1000px 420px at 110% -10%, rgba(34, 197, 94, 0.12), transparent 60%),
+    linear-gradient(180deg, #0c120e 0%, #101713 100%);
+  --sidebar-bg: #111915;
+  --admin-ink: #e9f1ec;
+  --admin-ink-soft: #9db3a6;
+  --topbar-bg: rgba(17, 25, 21, 0.9);
+  --table-head-bg: rgba(255, 255, 255, 0.07);
+
+  --auth-bg:
+    radial-gradient(800px 380px at 50% -10%, rgba(34, 197, 94, 0.22), transparent 60%),
+    linear-gradient(180deg, #071f0f, #0c120e);
+  --link: #4ade80;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.55);
+}
+
+/* ---------- Base ---------- */
+* { -webkit-tap-highlight-color: transparent; }
+html, body, #root { min-height: 100%; }
+body {
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.public-page { background: var(--bg); min-height: 100vh; }
+
+/* Tombol outline adaptif (pengganti btn-outline-light di area adaptif) */
+.btn-ghost {
+  border: 1px solid var(--line-strong);
+  color: var(--ink);
+  background: transparent;
+}
+.btn-ghost:hover, .btn-ghost:focus {
+  border-color: var(--brand);
+  color: var(--brand-strong);
+  background: transparent;
+}
+[data-theme="dark"] .btn-ghost:hover,
+[data-theme="dark"] .btn-ghost:focus { color: var(--brand-strong); }
+
+/* ---------- Navbar publik (selalu gelap = brand) ---------- */
+.public-nav {
+  background: var(--nav-bg) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.public-nav .navbar-brand { letter-spacing: 0.2px; }
+.public-nav .nav-link {
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 500;
+  border-radius: 8px;
+  padding-left: 0.7rem;
+  padding-right: 0.7rem;
+}
+.public-nav .nav-link:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+.public-nav .nav-link.active { color: #fff; background: rgba(255, 255, 255, 0.14); }
+
+/* ---------- Footer (selalu gelap = brand) ---------- */
+.public-footer { background: var(--footer-bg); border-top: 1px solid rgba(255, 255, 255, 0.08); }
+
+/* ---------- Hero ---------- */
+.hero-modern {
+  background: var(--hero-bg);
+  color: #fff;
+  border-radius: 0 0 28px 28px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.stat-pill {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  border-radius: 14px;
+  padding: 0.65rem 1rem;
+  min-width: 130px;
+}
+.stat-pill .num { font-size: 1.35rem; font-weight: 800; line-height: 1; }
+.stat-pill .lbl { font-size: 0.78rem; opacity: 0.85; }
+
+/* ---------- Kartu UMKM ---------- */
+.umkm-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.umkm-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--line-strong);
+}
+.umkm-card .card-img-top { height: 180px; object-fit: cover; }
+.umkm-card .card-body { padding: 0.9rem 1rem 1rem; }
+.umkm-card .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.15rem; }
+
+/* ---------- Section ---------- */
+.section-title { font-weight: 800; letter-spacing: -0.02em; }
+.section-eyebrow {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--brand-strong);
+}
+.kategori-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  background: var(--surface);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.kategori-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+
+/* ---------- Filter bar ---------- */
+.filter-bar {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 0.9rem;
+}
+
+/* ---------- Shell admin (adaptif terang/gelap) ---------- */
+.admin-shell { background: var(--admin-bg); min-height: 100vh; color: var(--admin-ink); }
+.admin-ink { color: var(--admin-ink) !important; }
+.admin-shell .sidebar {
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--line);
+  min-height: 100vh;
+}
+.admin-shell .sidebar .nav-link {
+  color: var(--admin-ink-soft);
+  border-radius: 10px;
+  font-weight: 500;
+}
+.admin-shell .sidebar .nav-link:hover { background: var(--surface-2); color: var(--admin-ink); }
+.admin-shell .sidebar .nav-link.active { background: var(--brand); color: #fff; }
+.admin-shell .sidebar .nav-link.active:hover { background: var(--brand-strong); color: #fff; }
+.admin-divider { border-color: var(--line) !important; }
+.admin-topbar {
+  background: var(--topbar-bg) !important;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.admin-drawer { background: var(--surface); border-right: 1px solid var(--line); }
+
+/* Kartu panel admin (nama lama dipertahankan agar 8 file tak perlu diubah) */
+.glass-card {
+  background: var(--surface) !important;
+  border: 1px solid var(--line) !important;
+  border-radius: var(--radius-lg);
+  color: var(--ink);
+  box-shadow: var(--shadow-md);
+}
+[data-theme="dark"] .glass-card {
+  background: rgba(255, 255, 255, 0.05) !important;
+  backdrop-filter: blur(12px);
+}
+.glass-card .card-header {
+  background: transparent;
+  border-bottom: 1px solid var(--line);
+  color: inherit;
+  font-weight: 700;
+}
+.glass-card .table { margin-bottom: 0; }
+.glass-card .table thead th {
+  background: var(--table-head-bg);
+  border: none;
+  white-space: nowrap;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.glass-card .form-control, .glass-card .form-select {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--line-strong);
+  color: var(--ink) !important;
+}
+.glass-card .form-control::placeholder { color: var(--muted); opacity: 0.8; }
+
+/* Kartu baris (tampilan mobile pengganti tabel) */
+.mobile-row-card {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+/* ---------- Auth (adaptif) ---------- */
+.auth-page { background: var(--auth-bg); min-height: 100vh; }
+.auth-card {
+  background: var(--surface);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+[data-theme="dark"] .auth-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+.auth-card .form-control {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--line-strong);
+  color: var(--ink) !important;
+  border-radius: 10px;
+  padding: 0.65rem 0.9rem;
+}
+[data-theme="dark"] .auth-card .form-control {
+  background-color: rgba(0, 0, 0, 0.35) !important;
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #fff !important;
+}
+.auth-card .form-control::placeholder { color: var(--muted); }
+.auth-card .form-label { font-weight: 600; }
+.auth-card .auth-alt { color: var(--link); font-weight: 600; text-decoration: none; }
+.auth-card .auth-alt:hover { text-decoration: underline; }
+
+/* ---------- Peta ---------- */
+.leaflet-map { width: 100%; height: calc(100vh - 56px); min-height: 480px; z-index: 0; }
+[data-theme="dark"] .leaflet-popup-content-wrapper,
+[data-theme="dark"] .leaflet-popup-tip {
+  background: var(--surface);
+  color: var(--ink);
+}
+[data-theme="dark"] .leaflet-bar a {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--line);
+}
+[data-theme="dark"] .leaflet-control-layers {
+  background: var(--surface);
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+/* ---------- SweetAlert2 mengikuti tema ---------- */
+[data-theme="dark"] .swal2-popup { background: var(--surface); color: var(--ink); }
+[data-theme="dark"] .swal2-title { color: var(--ink); }
+[data-theme="dark"] .swal2-html-container { color: var(--muted); }
+
+/* ---------- Avatar ---------- */
+.avatar-ring { border: 2px solid var(--line-strong); }
+
+/* ---------- Responsif ---------- */
+@media (max-width: 991.98px) {
+  .admin-shell .sidebar { min-height: auto; }
+  .hero-modern { border-radius: 0 0 20px 20px; }
+  .stat-pill { min-width: 0; flex: 1 1 30%; }
+}
+@media (max-width: 575.98px) {
+  .umkm-card .card-img-top { height: 160px; }
+  .leaflet-map { height: calc(100dvh - 56px); min-height: 420px; }
+  .display-hero { font-size: 1.7rem; }
+}
