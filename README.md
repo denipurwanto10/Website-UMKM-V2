@@ -1,4 +1,4 @@
-# Sistem Informasi UMKM Kabupaten Bandung
+# Sistem Informasi UMKM Kabupaten Bandung 
  
 Aplikasi pendataan dan direktori UMKM: portal publik (peta sebaran Leaflet + direktori usaha),
 dashboard admin (verifikasi, statistik, grafik), dan portal pemilik usaha (CRUD data UMKM &
